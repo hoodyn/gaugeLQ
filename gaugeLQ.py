@@ -100,7 +100,7 @@ def workOnDataPoint(datapoint, policy = default_policy, message = print, log_pol
         new_observables = anomalous_observables_new(obstable, policy['pull_min'], policy['pull_min_SM'])
         
         if  len(new_observables) > 1:
-            message('Multiple new observables...')
+            message('Multiple new observables:', new_observables)
             shift_mLQ = 'up'
             continue
 
@@ -141,3 +141,29 @@ def make_log_message_f(filename = 'log.log'):
             print(*args, file=f)
         print(*args)
     return log_message_f
+
+
+def workOnDataset(dataset, policy = default_policy, append_info = True, 
+                  message = print, result_filename = 'dataset_analyzed.pickle'):
+    message('Started working on new dataset:', dataset['info'])
+    message('Number of points:', len(dataset['data']))
+    message('Parameters of the analyzis:', policy)
+
+    t0 = perf_counter()
+    
+    for (n,pt) in enumerate(dataset['data']):
+        message('\n ==',n,'==')
+        workOnDataPoint(pt, policy = policy, message = message)
+
+    t1 = perf_counter()    
+    message('\nAnalysis of '+str(len(dataset['data']))+' points avoiding K0L took', (t1-t0)/60, 'minutes.') 
+    # Append info not only to log_file opened by 'message'
+    # but also to the dataset itself:
+    if append_info is True:
+        dataset['info'] = (dataset['info'], {'analyzed (minutes)': (t1-t0)/60,
+                                             'policy': policy})
+    elif append_info is not None:
+        dataset['info'] = (dataset['info'], append_info)
+
+    picklit(dataset, result_filename)
+    message('The analyzed dataset saved to ', result_filename)
