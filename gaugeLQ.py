@@ -61,8 +61,9 @@ def anomalous_observables_explained(obstable, pull_min, pull_min_SM):
 
 #likelihoods = [*gl._fast_likelihoods_yaml, *gl._likelihoods_yaml]
 
-default_policy = {'too_bad_logL': -8., 
-                  'bad_logL': -3,
+default_policy = {'catastrophic_logL': -15.,
+                  'too_bad_logL': -8., 
+                  'bad_logL': -3.,
                   'good_logL': +2.,
                   'pull_min': 2.5,
                   'pull_min_SM': 2.5
@@ -70,7 +71,8 @@ default_policy = {'too_bad_logL': -8.,
 
 extra_obs_default = {'BR(KS->emu,mue)'}
 
-def analyzeDataPoint(datapoint, policy = default_policy, message = print, log_policy = False, extra_obs_to_calculate = extra_obs_default):
+def analyzeDataPoint(datapoint, policy = default_policy, extra_obs_to_calculate = extra_obs_default, 
+                     message = print, log_policy = False):
     """Function to analyze given shape of quark-lepton mixing matrices.
     """
     t0 = perf_counter()
@@ -87,6 +89,8 @@ def analyzeDataPoint(datapoint, policy = default_policy, message = print, log_po
             mLQ *= 0.9
         elif shift_mLQ == 'up':
             mLQ *= 1.2
+        elif shift_mLQ == 'way_up':
+            mLQ *= 1.8
         tested_mLQs.append(mLQ)
         message('Studying mLQ =', mLQ, 'GeV.')
         
@@ -94,7 +98,12 @@ def analyzeDataPoint(datapoint, policy = default_policy, message = print, log_po
         logL = glp.log_likelihood_global()
         message('logL = ', logL)
         
-        if (logL < policy['too_bad_logL']):
+        if (logL < policy['catastrophic_logL']):
+            message('Catastrophic likelihood...')
+            shift_mLQ = 'way_up'   # If too strong bad signal,
+            continue               # try again with a heavier LQ mass.
+        
+        if (policy['catastrophic_logL'] < logL < policy['too_bad_logL']):
             message('Too bad likelihood...')
             shift_mLQ = 'up'   # If too strong bad signal,
             continue           # try again with a heavier LQ mass.
