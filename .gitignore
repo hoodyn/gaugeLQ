@@ -11,3 +11,7 @@
 !datasets/
 !logs/
 !*/*.auxfile
+
+# Keep the Wolfram notebook which i use for creating the datasets
+!VectorLQ_2021.nb
+!beta2.v7.m
