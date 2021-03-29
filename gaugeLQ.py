@@ -67,7 +67,7 @@ default_policy = {'too_bad_logL': -8.,
                   'pull_min_SM': 2.5
                  }
 
-def workOnDataPoint(datapoint, policy = default_policy, message = print, log_policy = False):
+def analyzeDataPoint(datapoint, policy = default_policy, message = print, log_policy = False):
     """Function to analyze given shape of quark-lepton mixing matrices.
     """
     t0 = perf_counter()
@@ -143,7 +143,7 @@ def make_log_message_f(filename = 'log.log'):
     return log_message_f
 
 
-def workOnDataset(dataset, policy = default_policy, append_info = True, 
+def analyzeDataset(dataset, policy = default_policy, append_info = True, 
                   message = print, result_filename = 'dataset_analyzed.pickle'):
     message('Started working on new dataset:', dataset['info'])
     message('Number of points:', len(dataset['data']))
@@ -153,7 +153,7 @@ def workOnDataset(dataset, policy = default_policy, append_info = True,
     
     for (n,pt) in enumerate(dataset['data']):
         message('\n ==',n,'==')
-        workOnDataPoint(pt, policy = policy, message = message)
+        analyzeDataPoint(pt, policy = policy, message = message)
 
     t1 = perf_counter()    
     message('\nAnalysis of '+str(len(dataset['data']))+' points avoiding K0L took', (t1-t0)/60, 'minutes.') 
@@ -165,5 +165,6 @@ def workOnDataset(dataset, policy = default_policy, append_info = True,
     elif append_info is not None:
         dataset['info'] = (dataset['info'], append_info)
 
-    picklit(dataset, result_filename)
-    message('The analyzed dataset saved to ', result_filename)
+    if result_filename != False:
+        picklit(dataset, result_filename)
+        message('The analyzed dataset saved to ', result_filename)          
