@@ -68,7 +68,9 @@ default_policy = {'too_bad_logL': -8.,
                   'pull_min_SM': 2.5
                  }
 
-def analyzeDataPoint(datapoint, policy = default_policy, message = print, log_policy = False):
+extra_obs_default = {'BR(KS->emu,mue)'}
+
+def analyzeDataPoint(datapoint, policy = default_policy, message = print, log_policy = False, extra_obs_to_calculate = extra_obs_default):
     """Function to analyze given shape of quark-lepton mixing matrices.
     """
     t0 = perf_counter()
@@ -129,6 +131,10 @@ def analyzeDataPoint(datapoint, policy = default_policy, message = print, log_po
     datapoint['logL'] = logL
     datapoint['likelihoods'] = glp.log_likelihood_dict()
     
+    extra_predicitons = {obs: smelli.flavio.np_prediction(obs, glp.w) 
+                         for obs in extra_obs_to_calculate}
+    datapoint['extra_predictions'] = extra_predicitons
+    
     t1 = perf_counter()
     datapoint['analysis_metadata'] = {'tested_mLQs': tested_mLQs, 'time (s)': t1-t0}
 
@@ -145,7 +151,8 @@ def make_log_message_f(filename = 'log.log'):
 
 
 def analyzeDataset(dataset, policy = default_policy, append_info = True, 
-                  message = print, result_filename = 'dataset_analyzed.pickle'):
+                  message = print, result_filename = 'dataset_analyzed.pickle',
+                  extra_obs_to_calculate = extra_obs_default):
     message('Started working on new dataset:', dataset['info'])
     message('Number of points:', len(dataset['data']))
     message('Parameters of the analyzis:', policy)
@@ -154,7 +161,8 @@ def analyzeDataset(dataset, policy = default_policy, append_info = True,
     
     for (n,pt) in enumerate(dataset['data']):
         message('\n ==',n,'==')
-        analyzeDataPoint(pt, policy = policy, message = message)
+        analyzeDataPoint(pt, policy = policy, message = message, 
+                         extra_obs_to_calculate = extra_obs_to_calculate)
 
     t1 = perf_counter()    
     message('\nAnalysis of '+str(len(dataset['data']))+' points avoiding K0L took', (t1-t0)/60, 'minutes.') 
@@ -171,7 +179,8 @@ def analyzeDataset(dataset, policy = default_policy, append_info = True,
         message('The analyzed dataset saved to ', result_filename)
 
 
-def analyzePickledDataset(input_filename, output_filename = True, log_filename = True):
+def analyzePickledDataset(input_filename, output_filename = True, log_filename = True,
+                          extra_obs_to_calculate = extra_obs_default):
     if output_filename is True:
         _output_filename = input_filename + ".analyzed"
     else: # string
@@ -185,5 +194,7 @@ def analyzePickledDataset(input_filename, output_filename = True, log_filename =
     log_message = make_log_message_f(filename=_log_filename)
 
     dataset = depicklit(input_filename)
-    analyzeDataset(dataset, message = log_message, result_filename = _output_filename)
+    analyzeDataset(dataset, message = log_message, 
+                   result_filename = _output_filename,
+                   extra_obs_to_calculate = extra_obs_to_calculate)
     # picklit(dataset, filename = _output_filename) ... This is already inside 'analyzeDataset'
