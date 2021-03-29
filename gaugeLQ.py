@@ -161,7 +161,8 @@ def make_log_message_f(filename = 'log.log'):
 
 def analyzeDataset(dataset, policy = default_policy, append_info = True, 
                   message = print, result_filename = 'dataset_analyzed.pickle',
-                  extra_obs_to_calculate = extra_obs_default):
+                  extra_obs_to_calculate = extra_obs_default,
+                  save_period = 10):
     message('Started working on new dataset:', dataset['info'])
     message('Number of points:', len(dataset['data']))
     message('Parameters of the analyzis:', policy)
@@ -172,6 +173,10 @@ def analyzeDataset(dataset, policy = default_policy, append_info = True,
         message('\n ==',n,'==')
         analyzeDataPoint(pt, policy = policy, message = message, 
                          extra_obs_to_calculate = extra_obs_to_calculate)
+        if (result_filename != False) and (n % save_period == 0):
+            picklit(dataset, result_filename)
+            message('The partially analyzed dataset saved to ', result_filename)
+
 
     t1 = perf_counter()    
     message('\nAnalysis of '+str(len(dataset['data']))+' points avoiding K0L took', (t1-t0)/60, 'minutes.') 
@@ -185,11 +190,11 @@ def analyzeDataset(dataset, policy = default_policy, append_info = True,
 
     if result_filename != False:
         picklit(dataset, result_filename)
-        message('The analyzed dataset saved to ', result_filename)
+        message('The analyzed dataset saved to ', result_filename, '\n')
 
 
 def analyzePickledDataset(input_filename, output_filename = True, log_filename = True,
-                          extra_obs_to_calculate = extra_obs_default):
+                          extra_obs_to_calculate = extra_obs_default, save_period = 10):
     if output_filename is True:
         _output_filename = input_filename + ".analyzed"
     else: # string
@@ -205,5 +210,6 @@ def analyzePickledDataset(input_filename, output_filename = True, log_filename =
     dataset = depicklit(input_filename)
     analyzeDataset(dataset, message = log_message, 
                    result_filename = _output_filename,
-                   extra_obs_to_calculate = extra_obs_to_calculate)
+                   extra_obs_to_calculate = extra_obs_to_calculate,
+                   save_period = save_period)
     # picklit(dataset, filename = _output_filename) ... This is already inside 'analyzeDataset'
