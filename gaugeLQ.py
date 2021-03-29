@@ -3,7 +3,7 @@ from ULR2WC import ULR2WC
 from wilson import Wilson
 import numpy as np
 from time import perf_counter
-gl = smelli.GlobalLikelihood()
+gl = smelli.GlobalLikelihood(exclude_likelihoods = ['likelihood_zlfv.yaml'])
 Wilson.set_default_option('smeft_accuracy', 'integrate')
 
 GeV = 1.
