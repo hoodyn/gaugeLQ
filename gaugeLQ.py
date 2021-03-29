@@ -11,6 +11,7 @@ TeV = 1000*GeV
 
 import pickle
 pickle_dir = 'datasets/'
+log_dir = 'logs/'
 
 def depicklit(filename, dirname = pickle_dir):
     with open(dirname + filename, 'rb') as f:
@@ -167,4 +168,22 @@ def analyzeDataset(dataset, policy = default_policy, append_info = True,
 
     if result_filename != False:
         picklit(dataset, result_filename)
-        message('The analyzed dataset saved to ', result_filename)          
+        message('The analyzed dataset saved to ', result_filename)
+
+
+def analyzePickledDataset(input_filename, output_filename = True, log_filename = True):
+    if output_filename is True:
+        _output_filename = input_filename + ".analyzed"
+    else: # string
+        _output_filename = output_filename
+    
+    if log_filename is True:
+        _log_filename = log_dir +  input_filename + ".log"
+    else: # string
+        _log_filename = log_dir + log_filename
+    
+    log_message = make_log_message_f(filename=_log_filename)
+
+    dataset = depicklit(input_filename)
+    analyzeDataset(dataset, message = log_message, result_filename = _output_filename)
+    # picklit(dataset, filename = _output_filename) ... This is already inside 'analyzeDataset'
