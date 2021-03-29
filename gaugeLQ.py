@@ -58,7 +58,7 @@ def anomalous_observables_explained(obstable, pull_min, pull_min_SM):
     SM_signals = SM_anomalous_observables(pull_min_SM)
     return tuple(obs for obs in SM_signals if obs not in signals)
 
-likelihoods = [*gl._fast_likelihoods_yaml, *gl._likelihoods_yaml]
+#likelihoods = [*gl._fast_likelihoods_yaml, *gl._likelihoods_yaml]
 
 default_policy = {'too_bad_logL': -8., 
                   'bad_logL': -3,
