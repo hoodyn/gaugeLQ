@@ -200,7 +200,7 @@ def analyzePickledDataset(input_filename, output_filename = True, log_filename =
                           extra_obs_to_calculate = extra_obs_default, save_period = 10,
                           update = False):
     if output_filename is True:
-        _output_filename = input_filename + ".analyzed"
+        _output_filename = input_filename # + ".analyzed"
     else: # string
         _output_filename = output_filename
     
