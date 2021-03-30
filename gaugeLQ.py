@@ -162,7 +162,7 @@ def make_log_message_f(filename = 'log.log'):
 def analyzeDataset(dataset, policy = default_policy, append_info = True, 
                   message = print, result_filename = 'dataset_analyzed.pickle',
                   extra_obs_to_calculate = extra_obs_default,
-                  save_period = 10):
+                  save_period = 10, update = False):
     message('Started working on new dataset:', dataset['info'])
     message('Number of points:', len(dataset['data']))
     message('Parameters of the analyzis:', policy)
@@ -171,11 +171,14 @@ def analyzeDataset(dataset, policy = default_policy, append_info = True,
     
     for (n,pt) in enumerate(dataset['data']):
         message('\n ==',n,'==')
-        analyzeDataPoint(pt, policy = policy, message = message, 
-                         extra_obs_to_calculate = extra_obs_to_calculate)
-        if (result_filename != False) and (n % save_period == 0):
-            picklit(dataset, result_filename)
-            message('The partially analyzed dataset saved to ', result_filename)
+        if ('firstSignal' in pt) and (update == False):
+            continue
+        else:
+            analyzeDataPoint(pt, policy = policy, message = message, 
+                            extra_obs_to_calculate = extra_obs_to_calculate)
+            if (result_filename != False) and (n % save_period == 0):
+                picklit(dataset, result_filename)
+                message('The partially analyzed dataset saved to ', result_filename)
 
 
     t1 = perf_counter()    
@@ -194,7 +197,8 @@ def analyzeDataset(dataset, policy = default_policy, append_info = True,
 
 
 def analyzePickledDataset(input_filename, output_filename = True, log_filename = True,
-                          extra_obs_to_calculate = extra_obs_default, save_period = 10):
+                          extra_obs_to_calculate = extra_obs_default, save_period = 10,
+                          update = False):
     if output_filename is True:
         _output_filename = input_filename + ".analyzed"
     else: # string
@@ -211,5 +215,6 @@ def analyzePickledDataset(input_filename, output_filename = True, log_filename =
     analyzeDataset(dataset, message = log_message, 
                    result_filename = _output_filename,
                    extra_obs_to_calculate = extra_obs_to_calculate,
-                   save_period = save_period)
+                   save_period = save_period,
+                   update = update)
     # picklit(dataset, filename = _output_filename) ... This is already inside 'analyzeDataset'
