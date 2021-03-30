@@ -76,7 +76,7 @@ default_policy = {'catastrophic_logL': -15.,
                   'pull_min_SM': 2.5
                  }
 
-extra_obs_default = {'BR(KS->emu,mue)'}
+extra_obs_default = {'BR(KS->emu,mue)', 'BR(Bs->etau,taue)'}
 
 def analyzeDataPoint(datapoint, policy = default_policy, extra_obs_to_calculate = extra_obs_default, 
                      message = print, log_policy = False):
