@@ -1,2 +1,2 @@
 # gaugeLQ
-Tools for analyzing phenomenology gauge leptoquarks.
+Tools for analyzing phenomenology of gauge leptoquarks.
