@@ -21,8 +21,8 @@ class Convergentor:
         if (self.upper is None) and (self.lower is None):
             return self._init_tip
         elif (self.upper is None) and (self.lower is not None):
-            return (1.5 * self.lower)
+            return (1.4 * self.lower)
         elif (self.upper is not None) and (self.lower is None):
-            return (0.93 * self.upper)
+            return (0.8 * self.upper)
         elif (self.upper is not None) and (self.lower is not None):
-            return (0.75 * self.upper + 0.25 * self.lower)
+            return (0.65 * self.upper + 0.35 * self.lower)
