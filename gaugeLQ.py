@@ -3,6 +3,8 @@ from ULR2WC import ULR2WC
 from wilson import Wilson
 import numpy as np
 from time import perf_counter
+from convergentor import Convergentor
+
 gl = smelli.GlobalLikelihood(
     include_likelihoods = ['likelihood_lfu_fccc.yaml',
                            'fast_likelihood_quarks.yaml',
@@ -87,17 +89,19 @@ def analyzeDataPoint(datapoint, policy = default_policy, extra_obs_to_calculate 
     if log_policy == True:
         message('Parameters of the analyzis:', policy)
 
-    mLQ = datapoint['mLQ_WM']
-    shift_mLQ = False  # A flag saying how to shift the mLQ ('up' or 'down')
+    #mLQ = datapoint['mLQ_WM']
+    #shift_mLQ = False  # A flag saying how to shift the mLQ ('up' or 'down')
     tested_mLQs = []   # List of all tested mLQ. Just for tuning.
-    
+    mLQestimator = Convergentor(init_tip = datapoint['mLQ_WM'])
+
     while 'firstSignal' not in datapoint:
-        if shift_mLQ == 'down':
-            mLQ *= 0.9
-        elif shift_mLQ == 'up':
-            mLQ *= 1.2
-        elif shift_mLQ == 'way_up':
-            mLQ *= 1.8
+        # if shift_mLQ == 'down':
+        #     mLQ *= 0.9
+        # elif shift_mLQ == 'up':
+        #     mLQ *= 1.2
+        # elif shift_mLQ == 'way_up':
+        #     mLQ *= 1.8
+        mLQ = mLQestimator.tip()
         tested_mLQs.append(mLQ)
         message('Studying mLQ =', mLQ, 'GeV.')
         
@@ -105,14 +109,15 @@ def analyzeDataPoint(datapoint, policy = default_policy, extra_obs_to_calculate 
         logL = glp.log_likelihood_global()
         message('logL = ', logL)
         
-        if (logL < policy['catastrophic_logL']):
-            message('Catastrophic likelihood...')
-            shift_mLQ = 'way_up'   # If too strong bad signal,
-            continue               # try again with a heavier LQ mass.
+        # if (logL < policy['catastrophic_logL']):
+        #     message('Catastrophic likelihood...')
+        #     shift_mLQ = 'way_up'   # If too strong bad signal,
+        #     continue               # try again with a heavier LQ mass.
         
-        if (policy['catastrophic_logL'] < logL < policy['too_bad_logL']):
+        #if (policy['catastrophic_logL'] < logL < policy['too_bad_logL']):
+        if (logL < policy['too_bad_logL']):
             message('Too bad likelihood...')
-            shift_mLQ = 'up'   # If too strong bad signal,
+            mLQestimator.log_lower(mLQ)   # If too strong bad signal,
             continue           # try again with a heavier LQ mass.
         
         obstable = glp.obstable() # Improve this line! Calculate just relevant part of it.
@@ -120,14 +125,15 @@ def analyzeDataPoint(datapoint, policy = default_policy, extra_obs_to_calculate 
         
         if  len(new_observables) > 1:
             message('Multiple new observables:', new_observables)
-            shift_mLQ = 'up'
+            mLQestimator.log_lower(mLQ) 
             continue
 
         if (policy['bad_logL'] < logL < policy['good_logL']) and len(new_observables) == 0:
             message('No signal.')
-            shift_mLQ = 'down'
+            mLQestimator.log_upper(mLQ)
             continue
         
+        # Poitive cases:
         if policy['good_logL'] < logL: 
             datapoint['firstSignal'] = 'Improving current likelihood!'
             message(datapoint['firstSignal'])

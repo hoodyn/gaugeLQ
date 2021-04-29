@@ -1,9 +1,9 @@
 class Convergentor:
     """Bez napovedy."""
-    def __init__(self):
-        print("Convergentor initialized!")
+    def __init__(self, init_tip = 200000):
         self.upper = None
         self.lower = None
+        self._init_tip = init_tip
 
     def log_upper(self, new_upper):
         if (self.lower is not None) and (new_upper < self.lower):
@@ -19,7 +19,7 @@ class Convergentor:
 
     def tip(self):
         if (self.upper is None) and (self.lower is None):
-            return 200000
+            return self._init_tip
         elif (self.upper is None) and (self.lower is not None):
             return (1.5 * self.lower)
         elif (self.upper is not None) and (self.lower is None):
