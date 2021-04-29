@@ -100,6 +100,10 @@ def analyzeDataPoint(datapoint, policy = default_policy, extra_obs_to_calculate 
     mLQestimator = Convergentor(init_tip = datapoint['mLQ_WM'])
 
     while 'firstSignal' not in datapoint:
+        # In case we fail to find reasonable mLQ:
+        if (len(tested_mLQs) >= 15):
+            datapoint['firstSignal'] = 'Not found.'
+            obstable = None
 
         mLQ = mLQestimator.tip()
         tested_mLQs.append(mLQ)
