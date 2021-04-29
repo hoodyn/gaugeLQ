@@ -70,7 +70,15 @@ def anomalous_observables_explained(obstable, pull_min, pull_min_SM):
 
 #likelihoods = [*gl._fast_likelihoods_yaml, *gl._likelihoods_yaml]
 
-default_policy = {'catastrophic_logL': -15.,
+default_policy = {#'catastrophic_logL': -15.,
+                  'too_bad_logL': -4., 
+                  'bad_logL': -3.,
+                  'good_logL': +2.,
+                  'pull_min': 2.5,
+                  'pull_min_SM': 2.0
+                 }
+
+default_policy_old = {'catastrophic_logL': -15.,
                   'too_bad_logL': -8., 
                   'bad_logL': -3.,
                   'good_logL': +2.,
