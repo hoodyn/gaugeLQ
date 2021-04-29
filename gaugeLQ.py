@@ -183,7 +183,7 @@ def make_log_message_f(filename = 'log.log'):
 def analyzeDataset(dataset, policy = default_policy, append_info = True, 
                   message = print, result_filename = 'dataset_analyzed.pickle',
                   extra_obs_to_calculate = extra_obs_default,
-                  save_period = 10, update = False):
+                  save_period = 5, update = False):
     message('Started working on new dataset:', dataset['info'])
     message('Number of points:', len(dataset['data']))
     message('Parameters of the analyzis:', policy)
@@ -218,7 +218,7 @@ def analyzeDataset(dataset, policy = default_policy, append_info = True,
 
 
 def analyzePickledDataset(input_filename, output_filename = True, log_filename = True,
-                          extra_obs_to_calculate = extra_obs_default, save_period = 10,
+                          extra_obs_to_calculate = extra_obs_default, save_period = 5,
                           update = False):
     if output_filename is True:
         _output_filename = input_filename # + ".analyzed"
