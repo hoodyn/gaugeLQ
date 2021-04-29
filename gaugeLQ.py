@@ -96,18 +96,11 @@ def analyzeDataPoint(datapoint, policy = default_policy, extra_obs_to_calculate 
     if log_policy == True:
         message('Parameters of the analyzis:', policy)
 
-    #mLQ = datapoint['mLQ_WM']
-    #shift_mLQ = False  # A flag saying how to shift the mLQ ('up' or 'down')
     tested_mLQs = []   # List of all tested mLQ. Just for tuning.
     mLQestimator = Convergentor(init_tip = datapoint['mLQ_WM'])
 
     while 'firstSignal' not in datapoint:
-        # if shift_mLQ == 'down':
-        #     mLQ *= 0.9
-        # elif shift_mLQ == 'up':
-        #     mLQ *= 1.2
-        # elif shift_mLQ == 'way_up':
-        #     mLQ *= 1.8
+
         mLQ = mLQestimator.tip()
         tested_mLQs.append(mLQ)
         message('Studying mLQ =', mLQ, 'GeV.')
@@ -115,13 +108,7 @@ def analyzeDataPoint(datapoint, policy = default_policy, extra_obs_to_calculate 
         glp = gl.parameter_point(makeWilson(datapoint, mLQ))
         logL = glp.log_likelihood_global()
         message('logL = ', logL)
-        
-        # if (logL < policy['catastrophic_logL']):
-        #     message('Catastrophic likelihood...')
-        #     shift_mLQ = 'way_up'   # If too strong bad signal,
-        #     continue               # try again with a heavier LQ mass.
-        
-        #if (policy['catastrophic_logL'] < logL < policy['too_bad_logL']):
+
         if (logL < policy['too_bad_logL']):
             message('Too bad likelihood...')
             mLQestimator.log_lower(mLQ)   # If too strong bad signal,
