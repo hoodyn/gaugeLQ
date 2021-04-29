@@ -46,10 +46,9 @@ def makeWilson(pt_dic, mLQ = 'mLQ_WM'):
     return wil
 
 SM_parameter_point = gl.parameter_point({}, scale=0.1*TeV)
-#SM_obstable = SM_parameter_point.obstable()
-SM_obstable = pickle.load(open('sm_obstable.pickle','rb'))
+SM_obstable = SM_parameter_point.obstable()
+#SM_obstable = pickle.load(open('sm_obstable.pickle','rb'))
 SM_logL = SM_parameter_point.log_likelihood_global()
-SM_logL
 
 def anomalous_observables(obstable, pull_min = 2.5):
     obstable_head = obstable[obstable['pull exp.'] > pull_min]
