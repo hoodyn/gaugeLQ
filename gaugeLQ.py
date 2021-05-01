@@ -39,8 +39,8 @@ def makeWilson(pt_dic, mLQ = 'mLQ_WM'):
     UR = np.array(pt_dic['UR'])
     if isinstance(mLQ, str):
         _mLQ = pt_dic[mLQ]
-    elif isinstance(mLQ, float):
-        _mLQ = mLQ
+    elif (isinstance(mLQ, float) or isinstance(mLQ, int)):
+        _mLQ = float(mLQ)
     WCs = ULR2WC(UL, UR, _mLQ)
     wil = Wilson(WCs, scale=_mLQ, eft='SMEFT', basis='Warsaw')
     return wil
