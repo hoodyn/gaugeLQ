@@ -51,7 +51,7 @@ def ULR2WC(UL, UR, mU1=10000, IgnoreGaugeCoupling=False):
 	_UL = np.array(UL)
 	_UR = np.array(UR)
 	WC_ed   = WC_dict('ed',  _UR, _UR, -1. *commonFactor,FlavorRange.upDiag)
-	WC_ledq = WC_dict('ledq',_UR, _UL, +2. *commonFactor,FlavorRange.full)
+	WC_ledq = WC_dict('ledq',_UL, _UR, +2. *commonFactor,FlavorRange.full)
 	WC_lq1  = WC_dict('lq1', _UL, _UL, -0.5*commonFactor,FlavorRange.upDiag)
 	WC_lq3  = WC_dict('lq3', _UL, _UL, -0.5*commonFactor,FlavorRange.upDiag)
 	
